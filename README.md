@@ -27,8 +27,7 @@ I simulated a malware drop to test the automated response capabilities.
 ## 🛠️ Technical Implementation
 
 ### 1. The Intelligence Engine (Wazuh Manager)
-I configured the global `ossec.conf` to enable the VirusTotal integration. This allows the SIEM to enrich logs with external threat data.
-
+A. I configured the global `ossec.conf` to enable the VirusTotal integration. This allows the SIEM to enrich logs with external threat data.
 ```xml
 <integration>
   <name>virustotal</name>
@@ -36,15 +35,49 @@ I configured the global `ossec.conf` to enable the VirusTotal integration. This 
   <group>syscheck</group>
   <alert_format>json</alert_format>
 </integration>
+```
+B. Append the following blocks to the Wazuh server /var/ossec/etc/ossec.conf file. This enables Active Response and trigger the remove-threat.exe executable when the VirusTotal query returns positive matches for threats:
+```
+<ossec_config>
+  <command>
+    <name>remove-threat</name>
+    <executable>remove-threat.exe</executable>
+    <timeout_allowed>no</timeout_allowed>
+  </command>
 
-``` 
+  <active-response>
+    <disabled>no</disabled>
+    <command>remove-threat</command>
+    <location>local</location>
+    <rules_id>87105</rules_id>
+  </active-response>
+</ossec_config>
+```
+C. Add the following rules to the Wazuh server /var/ossec/etc/rules/local_rules.xml file to alert about the Active Response results.
+```
+<group name="virustotal,">
+  <rule id="100092" level="12">
+      <if_sid>657</if_sid>
+      <match>Successfully removed threat</match>
+      <description>$(parameters.program) removed threat located at $(parameters.alert.data.virustotal.source.file)</description>
+  </rule>
 
+  <rule id="100093" level="12">
+    <if_sid>657</if_sid>
+    <match>Error removing threat</match>
+    <description>Error removing threat located at $(parameters.alert.data.virustotal.source.file)</description>
+  </rule>
+</group>
+```
 ### 2. The "Kill Script" (Python):
 A custom script that logs the incident for audit purposes before removing the threat.
 Instead of a simple batch script, I wrote a Python script to parse the JSON alert from Wazuh, extract the filename, and execute a secure deletion. This was compiled to an .exe using PyInstaller to ensure stability on the Windows Agent.
 <br>
 - <a href="https://github.com/Anirudhx7/Active-Defense-Lab/blob/00277f6fa75201085b4087dcbcd61bb2e9ee66e4/Scripts/remove-threat.py">`remove-threat.py`</a>
-
+Convert the active response Python script remove-threat.py to a Windows executable application.
+```
+> pyinstaller -F \path_to_remove-threat.py
+```
 ### 3. Endpoint Configuration
 The Windows Agent was configured to monitor the FIM_TEST directory in real-time to catch drive-by downloads.
 ```xml
