@@ -22,7 +22,7 @@ I simulated a malware drop to test the automated response capabilities.
 4.  **Result:** Threat eliminated immediately.
 
 ### Watch the Automation in Action:
-![Active Response](03_Active_Response_Demo.gif)
+![Active Response](https://github.com/Anirudhx7/Active-Defense-Lab/blob/9ee5f4cb4e658ecbed963aef5f3045b4c4e43f1d/images/03_Active_Response_Demo.gif)
 
 ## 🛠️ Technical Implementation
 
