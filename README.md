@@ -10,7 +10,7 @@ This project integrates **Splunk (SIEM)** and **Wazuh (EDR)** into a hybrid arch
 * **FIM (File Integrity Monitoring):** Real-time detection of filesystem changes on Windows/Linux.
 
 ## 🏗️ Architecture
-![Architecture](01_Network_Architecture.jpg)
+![Architecture](https://github.com/Anirudhx7/Active-Defense-Lab/blob/ca20bce519899b9d934d65d6d85d2f491ea91398/images/01_Architecture.png)
 
 ## ⚡ The Kill Chain (Proof of Concept)
 I simulated a malware drop to test the automated response capabilities.
