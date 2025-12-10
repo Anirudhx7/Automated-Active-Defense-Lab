@@ -15,8 +15,10 @@ This project integrates **Splunk (SIEM)** and **Wazuh (EDR)** into a hybrid arch
 ## ⚡ The Kill Chain (Proof of Concept)
 I simulated a malware drop to test the automated response capabilities.
 1.  **Attack:** "Malware" file dropped in a monitored directory.
-2.  **Detection:** Wazuh Agent detects file creation (Rule ID 554).
-3.  **Response:** Manager triggers `remove-threat.bat` on the endpoint.
+2.  **Detection:** Wazuh Agent (FIM) detects the new file and generates a hash.
+3.  **Intelligence:** Wazuh Manager queries the **VirusTotal API**.
+4.  **Decision:** If `positives > 0`, the Manager triggers an Active Response.
+5.  **Action:** A compiled Python executable (`remove-threat.exe`) runs on the endpoint to delete the file.
 4.  **Result:** Threat eliminated immediately.
 
 ### Watch the Automation in Action:
